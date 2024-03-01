@@ -108,3 +108,7 @@ fi
 alias pac='pyenv activate'
 
 
+# Utils
+
+eval $(thefuck --alias)
+
