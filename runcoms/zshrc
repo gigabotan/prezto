@@ -112,3 +112,5 @@ alias pac='pyenv activate'
 
 eval $(thefuck --alias)
 
+eval "$(register-python-argcomplete pipx)"
+

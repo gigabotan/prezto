@@ -10,3 +10,7 @@ if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; t
   source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
 . "$HOME/.cargo/env"
+
+# Begin added by argcomplete
+fpath=( /home/a3at/.local/lib/python3.12/site-packages/argcomplete/bash_completion.d "${fpath[@]}" )
+# End added by argcomplete
