@@ -89,6 +89,7 @@ then
 fi
 export EDITOR=vi
 export VISUAL=vi
+export NVIM_APPNAME=nvchad
 
 # safety features
 alias cp='cp -i'
@@ -114,3 +115,9 @@ eval $(thefuck --alias)
 
 eval "$(register-python-argcomplete pipx)"
 
+
+export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config:${HOME}/.kube/hetzner"
+
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /home/linuxbrew/.linuxbrew/Cellar/vault/1.17.5/bin/vault vault
