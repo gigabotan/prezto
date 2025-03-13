@@ -1,8 +1,10 @@
+# We have to wrap up p10k with direnv for proper work, don't know why and don't wanna research
+export DIRENV_LOG_FORMAT=
+(( ${+commands[direnv]} )) && emulate zsh -c "$(direnv export zsh)"
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-(( ${+commands[direnv]} )) && emulate zsh -c "$(direnv export zsh)"
-
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
@@ -31,7 +33,40 @@ fi
 
 # Customize to your needs...
 
+# OSC7 setup for wezterm
+# _urlencode() {
+# 	local length="${#1}"
+# 	for (( i = 0; i < length; i++ )); do
+# 		local c="${1:$i:1}"
+# 		case $c in
+# 			%) printf '%%%02X' "'$c" ;;
+# 			*) printf "%s" "$c" ;;
+# 		esac
+# 	done
+# }
+#
+# osc7_cwd() {
+# 	printf '\033]7;file://%s%s\e\\' "$HOSTNAME" "$(_urlencode "$PWD")"
+# }
+#
+# autoload -Uz add-zsh-hook
+# add-zsh-hook -Uz chpwd osc7_cwd
+
+function print_osc7() {
+  printf "\033]7;file://$HOST/$PWD\033\\"
+}
+autoload -Uz add-zsh-hook
+add-zsh-hook -Uz chpwd print_osc7
+
+# OSC7 support for Windows Terminal
+keep_current_path() {
+  printf "\e]9;9;%s\e\\" "$(wslpath -w "$PWD")"
+}
+precmd_functions+=(keep_current_path)
+
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+# typeset -g POWERLEVEL9K_TERM_SHELL_INTEGRATION=true
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # some functions
@@ -47,13 +82,22 @@ path_push_left() {
     fi
 }
 
+function y() {
+  local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+  yazi "$@" --cwd-file="$tmp"
+  if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+    builtin cd -- "$cwd"
+  fi
+  rm -f -- "$tmp"
+}
+
 
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
 
-#export PATH="$PATH:/home/a3at/.local/bin"
+export PATH="/home/a3at/.local/bin:$PATH"
 
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:$(go env GOPATH)/bin
@@ -89,11 +133,14 @@ if which nvim >/dev/null 2>&1
 then
     alias vi='nvim'
     alias vim='nvim'
-
 fi
-export EDITOR=vi
-export VISUAL=vi
-export NVIM_APPNAME=nvchad
+export EDITOR=nvim
+export VISUAL=nvim
+
+# export NVIM_APPNAME=nvchad
+alias nv='nvim'
+alias nvc='NVIM_APPNAME=nvchad nvim'
+alias nvl='NVIM_APPNAME=lazyvim nvim'
 
 # safety features
 alias cp='cp -i'
@@ -111,6 +158,7 @@ fi
 
 
 alias pac='pyenv activate'
+alias pad='pyenv deactivate'
 
 
 # Utils
@@ -127,3 +175,13 @@ autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /home/linuxbrew/.linuxbrew/Cellar/vault/1.17.5/bin/vault vault
 eval "$(uv generate-shell-completion zsh)"
 eval "$(uvx --generate-shell-completion zsh)"
+
+
+# Add deno completions to search path
+if [[ ":$FPATH:" != *":/home/a3at/.zsh/completions:"* ]]; then export FPATH="/home/a3at/.zsh/completions:$FPATH"; fi
+. "/home/a3at/.deno/env"
+
+eval "$(zoxide init zsh)"
+
+# Ruby and gem
+export PATH=$PATH:/home/linuxbrew/.linuxbrew/lib/ruby/gems/3.4.0/bin
