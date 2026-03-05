@@ -1,10 +1,12 @@
+# zmodload zsh/zprof
+
 # We have to wrap up p10k with direnv for proper work, don't know why and don't wanna research
 export DIRENV_LOG_FORMAT=
 (( ${+commands[direnv]} )) && emulate zsh -c "$(direnv export zsh)"
 
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
+# # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# # Initialization code that may require console input (password prompts, [y/n]
+# # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
@@ -65,10 +67,6 @@ keep_current_path() {
 precmd_functions+=(keep_current_path)
 
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-# typeset -g POWERLEVEL9K_TERM_SHELL_INTEGRATION=true
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
 # some functions
 function mkdircd {
     mkdir $1
@@ -102,12 +100,10 @@ export PATH="/home/a3at/.local/bin:$PATH"
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:$(go env GOPATH)/bin
 
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-source <(kubectl completion zsh)
-source <(helm completion zsh)
+# source <(kubectl completion zsh)
+# source <(helm completion zsh)
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
 
@@ -129,6 +125,8 @@ export LESS
 
 alias sudo='sudo '
 alias mkdir='mkdir -p -v'
+
+export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 if which nvim >/dev/null 2>&1
 then
     alias vi='nvim'
@@ -165,23 +163,33 @@ alias pad='pyenv deactivate'
 
 eval $(thefuck --alias)
 
-eval "$(register-python-argcomplete pipx)"
-
-
-export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config:${HOME}/.kube/hetzner"
-
-
-autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /home/linuxbrew/.linuxbrew/Cellar/vault/1.17.5/bin/vault vault
-eval "$(uv generate-shell-completion zsh)"
-eval "$(uvx --generate-shell-completion zsh)"
+# autoload -U +X bashcompinit && bashcompinit
+# complete -o nospace -C /home/linuxbrew/.linuxbrew/Cellar/vault/1.17.5/bin/vault vault
+# eval "$(uv generate-shell-completion zsh)"
+# eval "$(uvx --generate-shell-completion zsh)"
 
 
 # Add deno completions to search path
 if [[ ":$FPATH:" != *":/home/a3at/.zsh/completions:"* ]]; then export FPATH="/home/a3at/.zsh/completions:$FPATH"; fi
-. "/home/a3at/.deno/env"
+# . "/home/a3at/.deno/env"
 
 eval "$(zoxide init zsh)"
 
-# Ruby and gem
-export PATH=$PATH:/home/linuxbrew/.linuxbrew/lib/ruby/gems/3.4.0/bin
+# open vscode from WSL
+# export PATH=$PATH:$(wslupath -H)/AppData/Local/Programs/Microsoft\ VS\ Code/bin
+export PATH=$PATH:/mnt/c/Users/aaaza/AppData/Local/Programs/Microsoft\ VS\ Code/bin
+
+# bun completions
+# [ -s "/home/a3at/.bun/_bun" ] && source "/home/a3at/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# zprof
+
